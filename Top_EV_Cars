@@ -1,0 +1,65 @@
+#longest_range
+SELECT make, Model_Year, Electric_Range
+FROM `my-project-1-366602.ev_cars.ev_dataset`
+ORDER BY Electric_Range DESC
+LIMIT 1;
+
+#Avg_range
+SELECT AVG(Electric_Range) AS average_range
+FROM `my-project-1-366602.ev_cars.ev_dataset`;
+
+#Median_range
+SELECT
+  PERCENTILE_CONT(Electric_Range, 0.5) OVER() AS median_range
+FROM `my-project-1-366602.ev_cars.ev_dataset`
+LIMIT 1;
+
+#Top_5_EV_Range
+WITH top_5 AS (
+  SELECT distinct Model_Year, make, model, Electric_Range
+  FROM `my-project-1-366602.ev_cars.ev_dataset`
+  ORDER BY Electric_Range DESC
+  LIMIT 5)
+
+SELECT distinct
+  t5.Model_Year,
+  t5.make,
+  t5.model,
+  t5.Electric_Range,
+  (SELECT COUNT(*) FROM `my-project-1-366602.ev_cars.ev_dataset` WHERE Electric_Range < t5.Electric_Range) * 100.0 / (SELECT COUNT(*) FROM `my-project-1-366602.ev_cars.ev_dataset`) AS percentile
+FROM top_5 AS t5;
+
+#Largest_County_with_EV
+SELECT
+  make,
+  model,
+  county,
+  State
+FROM
+  `my-project-1-366602.ev_cars.ev_dataset`;
+
+#Top_5_Buyers
+SELECT
+  make,
+  model,
+  COUNT(*) AS car_count
+FROM
+  `my-project-1-366602.ev_cars.ev_dataset`
+GROUP BY
+  make,
+  model
+ORDER BY
+  car_count DESC
+LIMIT 5;
+
+#The data used in this project comes from the `my-project-1-366602.ev_cars.ev_dataset` table in Google BigQuery.
+
+#This repository contains an SQL query and a CSV file with the results for electric vehicles (EVs) based on specific criteria.
+
+## Files
+
+- `query.sql`: The SQL query used to retrieve the data from BigQuery.
+- `results.csv`: The exported results of the SQL query in CSV format.
+
+## Data Source
+
